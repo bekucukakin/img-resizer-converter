@@ -1,6 +1,7 @@
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import filedialog, messagebox
+from tkinter import ttk
 
 def resize_and_convert_image(image_path, output_path, width, height, output_format):
     try:
@@ -15,7 +16,6 @@ def open_file():
     return filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png;*.bmp;*.gif")])
 
 def save_file(output_format):
-    # Generate default file name with the selected format
     default_extension = f".{output_format.lower()}"
     return filedialog.asksaveasfilename(defaultextension=default_extension,
                                         filetypes=[("JPEG files", "*.jpg"), ("PNG files", "*.png"),
@@ -32,16 +32,18 @@ def show_selection_screen():
 
     window = tk.Tk()
     window.title("Choose Action")
-    window.geometry("400x200")
-    window.configure(bg="#f5f5f5")
+    window.geometry("500x300")
+    window.configure(bg="#2c3e50")  # Dark background for modern look
 
-    label = tk.Label(window, text="Choose an option:", font=("Arial", 16, "bold"), bg="#f5f5f5")
-    label.pack(pady=20)
+    # Title Label
+    label = ttk.Label(window, text="Choose an option:", font=("Helvetica", 18, "bold"), foreground="white", background="#2c3e50")
+    label.pack(pady=30)
 
-    resize_button = tk.Button(window, text="Resize Image", command=on_resize_select, font=("Arial", 12), bg="#4CAF50", fg="white", padx=20, pady=10)
+    # Buttons with ttk for modern design
+    resize_button = ttk.Button(window, text="Resize Image", command=on_resize_select, width=20)
     resize_button.pack(pady=10)
 
-    convert_button = tk.Button(window, text="Convert Image Format", command=on_convert_select, font=("Arial", 12), bg="#2196F3", fg="white", padx=20, pady=10)
+    convert_button = ttk.Button(window, text="Convert Image Format", command=on_convert_select, width=20)
     convert_button.pack(pady=10)
 
     window.mainloop()
@@ -71,11 +73,11 @@ def resize_gui():
             with Image.open(image_path) as img:
                 img_resized = img.resize((width, height))
                 img_tk = ImageTk.PhotoImage(img_resized)
-                canvas.image = img_tk  # Referansı tutuyoruz
-                canvas.delete("all")  # Eski resmi temizliyoruz
+                canvas.image = img_tk
+                canvas.delete("all")
                 canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
                 canvas.config(scrollregion=canvas.bbox("all"))
-                canvas.config(width=width, height=height)  # Dynamically adjust canvas size
+                canvas.config(width=width, height=height)
         except Exception as e:
             print(f"Error updating preview: {e}")
 
@@ -86,53 +88,54 @@ def resize_gui():
     window = tk.Tk()
     window.title("Image Resizer with Preview")
     window.geometry("800x600")
-    window.configure(bg="#f5f5f5")
+    window.configure(bg="#34495e")
 
-    title_label = tk.Label(window, text="Resize Image with Preview", font=("Arial", 16, "bold"), bg="#f5f5f5")
-    title_label.pack(pady=10)
+    # Title Label
+    title_label = ttk.Label(window, text="Resize Image with Preview", font=("Helvetica", 16, "bold"), foreground="white", background="#34495e")
+    title_label.pack(pady=20)
 
-    form_frame = tk.Frame(window, bg="#f5f5f5")
+    # Form Frame with ttk styling
+    form_frame = ttk.Frame(window)
     form_frame.pack(pady=10)
 
-    tk.Label(form_frame, text="Width:", bg="#f5f5f5", font=("Arial", 12)).grid(row=0, column=0, padx=10, pady=5)
-    width_entry = tk.Entry(form_frame, font=("Arial", 12))
+    ttk.Label(form_frame, text="Width:", font=("Helvetica", 12)).grid(row=0, column=0, padx=10, pady=5)
+    width_entry = ttk.Entry(form_frame, font=("Helvetica", 12))
     width_entry.grid(row=0, column=1, padx=10, pady=5)
 
-    tk.Label(form_frame, text="Height:", bg="#f5f5f5", font=("Arial", 12)).grid(row=1, column=0, padx=10, pady=5)
-    height_entry = tk.Entry(form_frame, font=("Arial", 12))
+    ttk.Label(form_frame, text="Height:", font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=5)
+    height_entry = ttk.Entry(form_frame, font=("Helvetica", 12))
     height_entry.grid(row=1, column=1, padx=10, pady=5)
 
     # Format selection for conversion
-    tk.Label(form_frame, text="Select Format:", bg="#f5f5f5", font=("Arial", 12)).grid(row=2, column=0, padx=10, pady=5)
+    ttk.Label(form_frame, text="Select Format:", font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=5)
     format_var = tk.StringVar(value="JPEG")
-    format_menu = tk.OptionMenu(form_frame, format_var, "JPEG", "PNG", "BMP", "GIF")
+    format_menu = ttk.Combobox(form_frame, textvariable=format_var, values=["JPEG", "PNG", "BMP", "GIF"], state="readonly", width=10)
     format_menu.grid(row=2, column=1, padx=10, pady=5)
 
-    # Update preview button
-    update_button = tk.Button(form_frame, text="Update Preview", command=update_preview, font=("Arial", 12),
-                               bg="#2196F3", fg="white", padx=10, pady=5)
+    # Update preview button with modern style
+    update_button = ttk.Button(form_frame, text="Update Preview", command=update_preview, width=20)
     update_button.grid(row=3, column=0, columnspan=2, pady=10)
 
     # Canvas for preview
-    canvas_frame = tk.Frame(window, bg="#f5f5f5")
+    canvas_frame = ttk.Frame(window)
     canvas_frame.pack(pady=10)
-    canvas = tk.Canvas(canvas_frame, width=400, height=300, bg="#e0e0e0")
+    canvas = tk.Canvas(canvas_frame, width=400, height=300, bg="#ecf0f1")
     canvas.pack()
 
     # Load initial preview
     with Image.open(image_path) as img:
         img.thumbnail((400, 300))
         img_tk = ImageTk.PhotoImage(img)
-        canvas.image = img_tk  # Referansı tutuyoruz
+        canvas.image = img_tk
         canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
         canvas.config(scrollregion=canvas.bbox("all"))
 
-    resize_button = tk.Button(window, text="Resize Image", command=perform_resize, font=("Arial", 12), bg="#4CAF50",
-                               fg="white", padx=20, pady=5)
+    # Resize button
+    resize_button = ttk.Button(window, text="Resize Image", command=perform_resize, width=20)
     resize_button.pack(pady=10)
 
     # Back to main menu button
-    back_button = tk.Button(window, text="Back to Main Menu", command=show_selection_screen, font=("Arial", 12), bg="#f44336", fg="white", padx=20, pady=5)
+    back_button = ttk.Button(window, text="Back to Main Menu", command=show_selection_screen, width=20)
     back_button.pack(pady=10)
 
     window.mainloop()
@@ -159,25 +162,23 @@ def convert_gui():
     window = tk.Tk()
     window.title("Convert Image Format")
     window.geometry("800x400")
-    window.configure(bg="#f5f5f5")
+    window.configure(bg="#34495e")
 
-    title_label = tk.Label(window, text="Convert Image Format", font=("Arial", 16, "bold"), bg="#f5f5f5")
-    title_label.pack(pady=10)
+    title_label = ttk.Label(window, text="Convert Image Format", font=("Helvetica", 16, "bold"), foreground="white", background="#34495e")
+    title_label.pack(pady=20)
 
-    form_frame = tk.Frame(window, bg="#f5f5f5")
+    form_frame = ttk.Frame(window)
     form_frame.pack(pady=10)
 
-    tk.Label(form_frame, text="Select Format:", bg="#f5f5f5", font=("Arial", 12)).grid(row=0, column=0, padx=10, pady=5)
+    ttk.Label(form_frame, text="Select Format:", font=("Helvetica", 12)).grid(row=0, column=0, padx=10, pady=5)
     format_var = tk.StringVar(value="JPEG")
-    format_menu = tk.OptionMenu(form_frame, format_var, "JPEG", "PNG", "BMP", "GIF")
+    format_menu = ttk.Combobox(form_frame, textvariable=format_var, values=["JPEG", "PNG", "BMP", "GIF"], state="readonly", width=10)
     format_menu.grid(row=0, column=1, padx=10, pady=5)
 
-    convert_button = tk.Button(window, text="Convert Image", command=perform_conversion, font=("Arial", 12), bg="#4CAF50",
-                               fg="white", padx=20, pady=5)
+    convert_button = ttk.Button(window, text="Convert Image", command=perform_conversion, width=20)
     convert_button.pack(pady=20)
 
-    # Back to main menu button
-    back_button = tk.Button(window, text="Back to Main Menu", command=show_selection_screen, font=("Arial", 12), bg="#f44336", fg="white", padx=20, pady=5)
+    back_button = ttk.Button(window, text="Back to Main Menu", command=show_selection_screen, width=20)
     back_button.pack(pady=10)
 
     window.mainloop()
